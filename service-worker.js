@@ -1,15 +1,15 @@
-const CACHE_NAME = "RPGSys-v1";
+const CACHE_NAME = "RPGSys-v2";
 
 const FILES_TO_CACHE = [
   "./",
   "./index.html",
   "./manifest.json",
   "./icon-192.png",
-  "./icon-512.png",
   "./events.html",
   "./itens.html",
   "./player.html",
-  "./stats.html"
+  "./stats.html",
+  "./icon-512.png"
 ];
 
 self.addEventListener("install", event => {
