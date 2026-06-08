@@ -12,6 +12,8 @@
     <link rel="icon" href="https://cdn.grapesjs.com/workspaces/cmpwv9nko0i8d6zqkbp8qure5/assets/62e0ef58-b8a6-44d8-bc34-9c5d4be5e78f__tl.png" />
   </head>
 
+
+
   <style>
     html {
   scroll-behavior: smooth;
@@ -1199,6 +1201,20 @@ video {
   }
 }
   </style>
+
+  <script>
+const user = JSON.parse(
+  localStorage.getItem("rpgsys_user")
+);
+
+if (!user) {
+  window.location.href = "index.html";
+}
+
+if (user.role !== "player") {
+  window.location.href = "index.html";
+}
+</script>
 
   <body id="iuf5yn">
     <section id="iqfnv6" class="gjs-section">

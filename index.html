@@ -277,9 +277,9 @@ video {
 }
 
 #i4tl1h {
-  width: 90%;
-  margin-left: 5%;
-  margin-right: 5%;
+  width: 70%;
+  margin-left: 15%;
+  margin-right: 15%;
   background-color: #737373;
   border-top-left-radius: 20px;
   border-top-right-radius: 20px;
@@ -297,7 +297,7 @@ video {
   padding-right: 0px;
   padding-bottom: 50px;
   padding-left: 0px;
-  margin-top: 22%;
+  margin-top: 13%;
 }
 
 #iiub1d {
@@ -422,6 +422,124 @@ video {
 }
   </style>
 
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-app.js";
+
+import {
+  getFirestore,
+  collection,
+  getDocs
+} from "https://www.gstatic.com/firebasejs/12.0.0/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyAM-ZU4ho0qs3jRWUXZEHrUM82bz3vvlro",
+  authDomain: "rpgsys-ae4bc.firebaseapp.com",
+  databaseURL: "https://rpgsys-ae4bc-default-rtdb.firebaseio.com",
+  projectId: "rpgsys-ae4bc",
+  storageBucket: "rpgsys-ae4bc.firebasestorage.app",
+  messagingSenderId: "22232601003",
+  appId: "1:22232601003:web:cf38df9fbcf442c79b42ee"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+
+// Pula o login se já estiver logado
+window.addEventListener("load", () => {
+
+  const user = JSON.parse(
+    localStorage.getItem("rpgsys_user")
+  );
+
+  if (!user) return;
+
+  if (user.role === "GM") {
+    window.location.href = "DM.html";
+  } else {
+    window.location.href = "events.html";
+  }
+
+});
+
+// Função chamada pelo botão
+window.login = async function() {
+
+  const nome = document.getElementById("iuv80d").value.trim();
+  const chave = document.getElementById("ic0ns5").value.trim();
+
+  if (!nome || !chave) {
+    alert("Preencha todos os campos.");
+    return;
+  }
+
+  try {
+
+    const snapshot = await getDocs(
+      collection(db, "users")
+    );
+
+    let usuarioEncontrado = null;
+
+    snapshot.forEach((docSnap) => {
+
+      const data = docSnap.data();
+
+      if (
+        data.Name === nome &&
+        data.AcessKey === chave
+      ) {
+
+        usuarioEncontrado = {
+          id: docSnap.id,
+          name: data.Name,
+          role: data.role
+        };
+
+      }
+
+    });
+
+    if (!usuarioEncontrado) {
+      alert("Nome ou chave inválidos.");
+      return;
+    }
+
+    localStorage.setItem(
+      "rpgsys_user",
+      JSON.stringify(usuarioEncontrado)
+    );
+
+    if (usuarioEncontrado.role === "GM") {
+
+      window.location.href = "DM.html";
+
+    } else {
+
+      window.location.href = "events.html";
+
+    }
+
+  } catch (erro) {
+
+    console.error(erro);
+    alert("Erro ao acessar o Firestore.");
+
+  }
+
+};
+
+// Para testes, execute no console:
+// limparLogin()
+window.limparLogin = function() {
+
+  localStorage.removeItem("rpgsys_user");
+
+  alert("Login removido.");
+
+};
+
+</script>
+
   <body id="i99hvn">
     <section id="i4tl1h" class="gjs-section">
       <div id="i9kok9" class="gjs-container">
@@ -444,7 +562,7 @@ video {
         </div>
         <div data-type-role="flex-row" id="ijy1tg" class="gjs-plg-flex-row">
           <div data-type-role="flex-column" id="ibcy1g" class="gjs-plg-flex-column">
-            <a href="events.html"><div id="iteasn">Acessar</div></a>
+            <button id="iteasn" type="button" onclick="login()">Acessar</button>
           </div>
         </div>
       </div>

@@ -1,0 +1,479 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <title>DM - RPGSys</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <meta name="robots" content="index,follow">
+    <meta name="generator" content="GrapesJS Studio">
+    <meta property="og:title" content="Login" />
+    <meta property="og:image" content="https://cdn.grapesjs.com/workspaces/cmpwv9nko0i8d6zqkbp8qure5/assets/62e0ef58-b8a6-44d8-bc34-9c5d4be5e78f__tl.png" />
+    <link rel="icon" href="https://cdn.grapesjs.com/workspaces/cmpwv9nko0i8d6zqkbp8qure5/assets/62e0ef58-b8a6-44d8-bc34-9c5d4be5e78f__tl.png" />
+  </head>
+<body>
+
+    <style>
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:Arial, sans-serif;
+}
+
+.painel{
+    padding:30px;
+
+    display:grid;
+    grid-template-columns:
+        max-content
+        300px
+        180px;
+
+    gap:20px;
+
+    justify-content:center;
+    align-items:start;
+}
+
+.players{
+    display:flex;
+    gap:10px;
+}
+
+.player-card{
+    text-align: center;
+    width:150px;
+    min-height:270px;
+    background-color: #a6a6a6;
+    padding: 10px;
+    border-radius: 20px;
+}
+
+.player-card img{
+    width:90px;
+    height:90px;
+    border-radius:50%;
+    display:block;
+    margin:auto;
+    margin-bottom:10px;
+    background-color: white;
+    padding-top: 15px;
+    padding-left: 10px;
+    padding-right: 10px;
+}
+
+.player-card h3{
+    margin-bottom:10px;
+    margin-top:20px;
+}
+
+button{
+    border:none;
+    background:#39a6ee;
+    color:white;
+    font-weight:bold;
+    border-radius:12px;
+    padding:8px;
+    cursor:pointer;
+}
+
+.player-card button{
+    width:100%;
+    margin-top:8px;
+}
+
+.sidebar{
+    width:300px;
+    display:flex;
+    flex-direction:column;
+    gap:12px;
+}
+
+.box{
+    width:100%;
+    background:#adadad;
+    border-radius:12px;
+    padding:14px;
+}
+
+.box h2{
+    font-size:28px;
+    margin-bottom:15px;
+}
+
+.controls{
+    display:flex;
+    gap:8px;
+    align-items:center;
+    margin-bottom:15px;
+}
+
+.round{
+    width:35px;
+    height:35px;
+    border-radius:50%;
+}
+
+.plus{
+    background:#00c060;
+}
+
+.minus{
+    background:#ff5a5a;
+}
+
+.controls input{
+    flex:1;
+    height:40px;
+    border:2px solid #00c060;
+    border-radius:15px;
+}
+
+.coins{
+    display:flex;
+    gap:6px;
+    margin:10px 0 15px;
+}
+
+.coins button{
+    width:35px;
+    height:35px;
+    border-radius:50%;
+    background:#808080;
+}
+
+.apply{
+    width:120px;
+    display:block;
+    margin:auto;
+}
+
+.categorias{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:10px;
+}
+
+.actions{
+    border-radius: 20px;
+    padding: 20px;
+    background-color: #a6a6a6;
+    width:200px;
+    display:flex;
+    flex-direction:column;
+    gap:8px;
+}
+
+.weather{
+    display:grid;
+    grid-template-columns:repeat(2,1fr);
+    gap:4px;
+    padding:8px;
+}
+
+.weather button{
+    width:75px;
+    height:75px;
+    font-size: 40px;
+}
+
+.actions > button{
+    width:100%;
+    height: 40px;
+    margin-top:8px;
+}
+
+.CheckPlayerBTN {
+    appearance: none;
+    -webkit-appearance: none;
+
+    width: 50px;
+    height: 50px;
+
+    border: none;
+    border-radius: 50%;
+
+    background: #ccc;
+    cursor: pointer;
+
+    transition: 0.2s;
+    border: #00c060;
+}
+
+.CheckPlayerBTN:checked {
+    background: #39a6ee;
+}
+
+    </style>
+
+    <script type="module">
+
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-app.js";
+
+import {
+    getFirestore,
+    doc,
+    updateDoc,
+    increment,
+    setDoc
+} from "https://www.gstatic.com/firebasejs/12.0.0/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyAM-ZU4ho0qs3jRWUXZEHrUM82bz3vvlro",
+  authDomain: "rpgsys-ae4bc.firebaseapp.com",
+  databaseURL: "https://rpgsys-ae4bc-default-rtdb.firebaseio.com",
+  projectId: "rpgsys-ae4bc",
+  storageBucket: "rpgsys-ae4bc.firebasestorage.app",
+  messagingSenderId: "22232601003",
+  appId: "1:22232601003:web:cf38df9fbcf442c79b42ee"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+
+const user = JSON.parse(
+    localStorage.getItem("rpgsys_user")
+);
+
+if (!user) {
+    window.location.href = "index.html";
+}
+
+if (user.role !== "GM") {
+    window.location.href = "events.html";
+}
+
+let modo = "heal";
+
+const btnHeal =
+document.getElementById("btnHeal");
+
+const btnDamage =
+document.getElementById("btnDamage");
+
+const damageInput =
+document.getElementById("damageInput");
+
+const applyDamage =
+document.getElementById("applyDamage");
+
+btnHeal.onclick = () => {
+
+    modo = "heal";
+
+    damageInput.style.border =
+    "2px solid #00c060";
+
+};
+
+btnDamage.onclick = () => {
+
+    modo = "damage";
+
+    damageInput.style.border =
+    "2px solid #ff5a5a";
+
+};
+
+function jogadoresSelecionados(){
+
+    const checks =
+    document.querySelectorAll(".CheckPlayerBTN");
+
+    const ids = [];
+
+    checks.forEach(check => {
+
+        if(check.checked){
+
+            ids.push(
+                check.dataset.player
+            );
+
+        }
+
+    });
+
+    return ids;
+
+}
+
+async function aplicarVida(){
+
+    const valor =
+    Number(damageInput.value);
+
+    if(!valor) return;
+
+    const jogadores =
+    jogadoresSelecionados();
+
+    for(const id of jogadores){
+
+        const ref =
+        doc(db,"users",id);
+
+        await updateDoc(ref,{
+            hp: increment(
+                modo === "heal"
+                ? valor
+                : -valor
+            )
+        });
+
+    }
+
+    damageInput.value = "";
+
+}
+
+async function abrirInventario(playerId){
+
+    await setDoc(
+        doc(db,"events",playerId),
+        {
+            action: "openInventory",
+            timestamp: Date.now()
+        },
+        {
+            merge:true
+        }
+    );
+
+}
+
+applyDamage.onclick =
+aplicarVida;
+
+window.abrirInventario =
+abrirInventario;
+
+window.logout = function() {
+
+    localStorage.removeItem("rpgsys_user");
+
+    window.location.href = "index.html";
+
+};
+
+window.logout = function() {
+
+  localStorage.removeItem("rpgsys_user");
+
+  window.location.href = "index.html";
+
+};
+
+</script>
+
+<div class="painel">
+
+    <div class="players">
+
+        <div class="player-card">
+            <img src="https://cdn.grapesjs.com/workspaces/cmpwv9nko0i8d6zqkbp8qure5/assets/a361fd0d-111a-4fcd-94f8-c91f26176bfb__user.png" alt="">
+            <h3>Bianca</h3>
+
+            <input type="checkbox" class="CheckPlayerBTN" data-player="0001">
+            <button onclick="abrirInventario('0001')">Inventário</button>
+            <button>Configurar</button>
+            <button>Estatísticas</button>
+        </div>
+
+        <div class="player-card">
+            <img src="https://cdn.grapesjs.com/workspaces/cmpwv9nko0i8d6zqkbp8qure5/assets/a361fd0d-111a-4fcd-94f8-c91f26176bfb__user.png" alt="">
+            <h3>Miguel</h3>
+
+            <input type="checkbox" class="CheckPlayerBTN" data-player="0002">
+            <button onclick="abrirInventario('0002')">Inventário</button>
+            <button>Configurar</button>
+            <button>Estatísticas</button>
+        </div>
+
+        <div class="player-card">
+            <img src="https://cdn.grapesjs.com/workspaces/cmpwv9nko0i8d6zqkbp8qure5/assets/a361fd0d-111a-4fcd-94f8-c91f26176bfb__user.png" alt="">
+            <h3>Gabriel</h3>
+
+            <input type="checkbox" class="CheckPlayerBTN" data-player="0003">
+            <button onclick="abrirInventario('0003')">Inventário</button>
+            <button>Configurar</button>
+            <button>Estatísticas</button>
+        </div>
+
+        <div class="player-card">
+            <img src="https://cdn.grapesjs.com/workspaces/cmpwv9nko0i8d6zqkbp8qure5/assets/a361fd0d-111a-4fcd-94f8-c91f26176bfb__user.png" alt="">
+            <h3>Julia</h3>
+
+            <input type="checkbox" class="CheckPlayerBTN" data-player="0004">
+            <button onclick="abrirInventario('0004')">Inventário</button>
+            <button>Configurar</button>
+            <button>Estatísticas</button>
+        </div>
+
+    </div>
+
+    <div class="sidebar">
+
+        <div class="box">
+            <h2>Dano</h2>
+
+            <button id="btnHeal" class="round plus">+</button>
+            <button id="btnDamage" class="round minus">−</button>
+
+            <input id="damageInput" type="number">
+
+            <button id="applyDamage" class="apply">
+                Aplicar
+            </button>
+        </div>
+
+        <div class="box">
+            <h2>Dinheiro</h2>
+
+            <div class="controls">
+                <button class="round plus">+</button>
+                <button class="round minus">−</button>
+                <input type="text">
+            </div>
+
+            <div class="coins">
+                <button>CP</button>
+                <button>PP</button>
+                <button>PE</button>
+                <button>PO</button>
+                <button>PL</button>
+            </div>
+
+            <button class="apply">Aplicar</button>
+        </div>
+
+        <div class="box categorias">
+            <button>Itens</button>
+            <button>Poções</button>
+            <button>Armaduras</button>
+            <button>Alimentos</button>
+        </div>
+
+    </div>
+
+    <div class="actions">
+
+        <div class="weather">
+            <button>🌙</button>
+            <button>☀️</button>
+            <button>🌧️</button>
+            <button>☁️</button>
+        </div>
+
+        <button>Criar combate</button>
+        <button>Criar carta</button>
+        <button>Testar UI jogadores</button>
+
+    </div>
+
+</div>
+
+<button class="LogOutBTN" onclick="logout()">Sair</button>
+
+</body>
+</html>

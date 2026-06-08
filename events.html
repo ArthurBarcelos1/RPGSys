@@ -461,8 +461,8 @@ video {
   color: white;
   font-weight: 700;
   width: 50%;
-  margin-left: 300px;
-  margin-right: 605px;
+  margin-left: 25%;
+  margin-right: 25%;
   margin-bottom: 5px;
   margin-top: 5px;
   padding-top: 18px;
@@ -523,8 +523,8 @@ video {
   color: white;
   font-weight: 700;
   width: 50%;
-  margin-left: 300px;
-  margin-right: 605px;
+  margin-left: 25%;
+  margin-right: 25%;
   margin-bottom: 5px;
   margin-top: 5px;
   padding-top: 6px;
@@ -777,6 +777,16 @@ video {
   margin-bottom: 5px;
 }
 
+#logoutBtn {
+  padding: 10px 20px;
+  background: #ff4d4d;
+  color: white;
+  border: none;
+  border-radius: 20px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
 @media (max-width: 1320px) {
   #i5zy3i {
     margin-left: 25%;
@@ -935,6 +945,71 @@ video {
 }
   </style>
 
+  <script type="module">
+
+import { initializeApp }
+from "https://www.gstatic.com/firebasejs/12.0.0/firebase-app.js";
+
+import {
+    getFirestore,
+    doc,
+    onSnapshot
+}
+from "https://www.gstatic.com/firebasejs/12.0.0/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyAM-ZU4ho0qs3jRWUXZEHrUM82bz3vvlro",
+  authDomain: "rpgsys-ae4bc.firebaseapp.com",
+  databaseURL: "https://rpgsys-ae4bc-default-rtdb.firebaseio.com",
+  projectId: "rpgsys-ae4bc",
+  storageBucket: "rpgsys-ae4bc.firebasestorage.app",
+  messagingSenderId: "22232601003",
+  appId: "1:22232601003:web:cf38df9fbcf442c79b42ee",
+  measurementId: "G-3KLBEM1LWV"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+
+const user = JSON.parse(
+    localStorage.getItem("rpgsys_user")
+);
+
+if (!user) {
+    window.location.href = "index.html";
+}
+
+if (user.role !== "player") {
+    window.location.href = "index.html";
+}
+
+const playerId = user.id;
+
+onSnapshot(
+    doc(db, "events", playerId),
+    (snap) => {
+
+        const data = snap.data();
+
+        if (data?.action === "openInventory") {
+
+            window.location.href = "itens.html";
+
+        }
+
+    }
+);
+
+window.logout = function() {
+
+  localStorage.removeItem("rpgsys_user");
+
+  window.location.href = "index.html";
+
+};
+
+</script>
+
   <body id="ir9q">
     <section id="icb44z" class="gjs-section">
       <div id="iwr9vc" class="gjs-container">
@@ -994,20 +1069,7 @@ video {
         <div id="ir5h4m">Eventos Globais</div>
         <div data-type-role="flex-row" id="ia55h9" class="gjs-plg-flex-row">
           <div data-type-role="flex-column" id="i0nj94" class="gjs-plg-flex-column">
-            <div id="irxiwb">Turno</div>
-            <div id="i7df1m">Jogador 4 <span id="i9anpv" class="a_GcMg font-feature-liga-off font-feature-clig-off font-feature-calt-off text-decoration-none text-strikethrough-none">+10HP </span>
-              <span id="ii88e4" class="a_GcMg font-feature-liga-off font-feature-clig-off font-feature-calt-off text-decoration-none text-strikethrough-none">com </span>
-              <span id="isxlew" class="a_GcMg font-feature-liga-off font-feature-clig-off font-feature-calt-off text-decoration-none text-strikethrough-none">Poção de Cura</span>
-            </div>
-          </div>
-        </div>
-        <div data-type-role="flex-row" id="ig516g" class="gjs-plg-flex-row">
-          <div data-type-role="flex-column" id="ilxqff" class="gjs-plg-flex-column">
-            <div id="ihtykn">Turno</div>
-            <div id="icji5x">Jogador 4 <span id="i5xo7s" class="a_GcMg font-feature-liga-off font-feature-clig-off font-feature-calt-off text-decoration-none text-strikethrough-none">+10HP </span>
-              <span id="id81jk" class="a_GcMg font-feature-liga-off font-feature-clig-off font-feature-calt-off text-decoration-none text-strikethrough-none">com </span>
-              <span id="im8pzk" class="a_GcMg font-feature-liga-off font-feature-clig-off font-feature-calt-off text-decoration-none text-strikethrough-none">Poção de Cura</span>
-            </div>
+            
           </div>
         </div>
       </div>
@@ -1031,6 +1093,7 @@ video {
         </div>
       </div>
     </section>
+    <button class="LogOutBTN" onclick="logout()">Sair</button>
   </body>
 
 </html>
