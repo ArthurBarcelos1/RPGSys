@@ -1,4 +1,4 @@
-const CACHE_NAME = "RPGSys-v5";
+const CACHE_NAME = "RPGSys-v6";
 
 const FILES_TO_CACHE = [
   "./",

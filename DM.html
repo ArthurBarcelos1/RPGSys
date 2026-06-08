@@ -221,8 +221,8 @@ button{
 
     <script type="module">
 
-import { initializeApp } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-app.js";
 
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-app.js";
 import {
     getFirestore,
     doc,
@@ -230,6 +230,8 @@ import {
     increment,
     setDoc
 } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-firestore.js";
+
+/* ================= FIREBASE ================= */
 
 const firebaseConfig = {
   apiKey: "AIzaSyAM-ZU4ho0qs3jRWUXZEHrUM82bz3vvlro",
@@ -244,137 +246,189 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
-const user = JSON.parse(
-    localStorage.getItem("rpgsys_user")
-);
+/* ================= CHECK LOGIN ================= */
 
-if (!user) {
-    window.location.href = "index.html";
-}
+const user = JSON.parse(localStorage.getItem("rpgsys_user"));
 
-if (user.role !== "GM") {
-    window.location.href = "events.html";
-}
+if (!user) window.location.href = "index.html";
+if (user.role !== "GM") window.location.href = "events.html";
 
-let modo = "heal";
+/* ================= ELEMENTOS ================= */
 
-const btnHeal =
-document.getElementById("btnHeal");
+const btnHeal = document.getElementById("btnHeal");
+const btnDamage = document.getElementById("btnDamage");
+const damageInput = document.getElementById("damageInput");
+const applyDamage = document.getElementById("applyDamage");
 
-const btnDamage =
-document.getElementById("btnDamage");
+const caInput = document.getElementById("caInput");
+const xpInput = document.getElementById("xpInput");
 
-const damageInput =
-document.getElementById("damageInput");
+const applyCa = document.getElementById("applyCa");
+const applyXp = document.getElementById("applyXp");
 
-const applyDamage =
-document.getElementById("applyDamage");
+/* ================= MODOS ================= */
 
-btnHeal.onclick = () => {
+let modoHP = "heal";
+let modoCA = "add";
+let modoXP = "add";
 
-    modo = "heal";
+/* ================= HP MODE ================= */
 
-    damageInput.style.border =
-    "2px solid #00c060";
+btnHeal?.addEventListener("click", () => {
+    modoHP = "heal";
+    damageInput.style.border = "2px solid #00c060";
+});
 
-};
+btnDamage?.addEventListener("click", () => {
+    modoHP = "damage";
+    damageInput.style.border = "2px solid #ff5a5a";
+});
 
-btnDamage.onclick = () => {
+/* ================= CA MODE ================= */
 
-    modo = "damage";
+document.getElementById("btnCaPlus")?.addEventListener("click", () => {
+    modoCA = "add";
+    caInput.style.border = "2px solid #00c060";
+});
 
-    damageInput.style.border =
-    "2px solid #ff5a5a";
+document.getElementById("btnCaMinus")?.addEventListener("click", () => {
+    modoCA = "remove";
+    caInput.style.border = "2px solid #ff5a5a";
+});
 
-};
+/* ================= XP MODE ================= */
 
-function jogadoresSelecionados(){
+document.getElementById("btnXpPlus")?.addEventListener("click", () => {
+    modoXP = "add";
+    xpInput.style.border = "2px solid #00c060";
+});
 
-    const checks =
-    document.querySelectorAll(".CheckPlayerBTN");
+document.getElementById("btnXpMinus")?.addEventListener("click", () => {
+    modoXP = "remove";
+    xpInput.style.border = "2px solid #ff5a5a";
+});
 
+/* ================= SELEÇÃO SEGURA ================= */
+
+function jogadoresSelecionados() {
+
+    const checks = document.querySelectorAll(".CheckPlayerBTN");
     const ids = [];
 
     checks.forEach(check => {
 
-        if(check.checked){
+        if (check.checked) {
 
-            ids.push(
-                check.dataset.player
-            );
+            const id = check.getAttribute("data-player");
+
+            if (id) ids.push(id);
 
         }
 
     });
 
-    return ids;
+    console.log("Jogadores selecionados:", ids);
 
+    return ids;
 }
 
-async function aplicarVida(){
+/* ================= HP ================= */
 
-    const valor =
-    Number(damageInput.value);
+async function aplicarHP() {
 
-    if(!valor) return;
+    const valor = Number(damageInput.value);
 
-    const jogadores =
-    jogadoresSelecionados();
+    if (!valor || valor <= 0) return;
 
-    for(const id of jogadores){
+    const jogadores = jogadoresSelecionados();
 
-        const ref =
-        doc(db,"users",id);
+    for (const id of jogadores) {
 
-        await updateDoc(ref,{
+        console.log("HP update ->", id);
+
+        await updateDoc(doc(db, "users", id), {
             hp: increment(
-                modo === "heal"
-                ? valor
-                : -valor
+                modoHP === "heal" ? valor : -valor
             )
         });
 
     }
 
     damageInput.value = "";
-
 }
 
-async function abrirInventario(playerId){
+/* ================= CA ================= */
 
-    await setDoc(
-        doc(db,"events",playerId),
-        {
-            action: "openInventory",
-            timestamp: Date.now()
-        },
-        {
-            merge:true
-        }
-    );
+async function aplicarCA() {
 
+    const valor = Number(caInput.value);
+
+    if (!valor || valor <= 0) return;
+
+    const jogadores = jogadoresSelecionados();
+
+    for (const id of jogadores) {
+
+        console.log("CA update ->", id);
+
+        await updateDoc(doc(db, "users", id), {
+            ca: increment(
+                modoCA === "add" ? valor : -valor
+            )
+        });
+
+    }
+
+    caInput.value = "";
 }
 
-applyDamage.onclick =
-aplicarVida;
+/* ================= XP ================= */
 
-window.abrirInventario =
-abrirInventario;
+async function aplicarXP() {
 
-window.logout = function() {
+    const valor = Number(xpInput.value);
 
-    localStorage.removeItem("rpgsys_user");
+    if (!valor || valor <= 0) return;
 
-    window.location.href = "index.html";
+    const jogadores = jogadoresSelecionados();
+
+    for (const id of jogadores) {
+
+        console.log("XP update ->", id);
+
+        await updateDoc(doc(db, "users", id), {
+            xp: increment(
+                modoXP === "add" ? valor : -valor
+            )
+        });
+
+    }
+
+    xpInput.value = "";
+}
+
+/* ================= BIND BOTÕES ================= */
+
+applyDamage?.addEventListener("click", aplicarHP);
+applyCa?.addEventListener("click", aplicarCA);
+applyXp?.addEventListener("click", aplicarXP);
+
+/* ================= INVENTÁRIO ================= */
+
+window.abrirInventario = async function (playerId) {
+
+    await setDoc(doc(db, "events", playerId), {
+        action: "openInventory",
+        timestamp: Date.now()
+    }, { merge: true });
 
 };
 
-window.logout = function() {
+/* ================= LOGOUT ================= */
 
-  localStorage.removeItem("rpgsys_user");
-
-  window.location.href = "index.html";
-
+window.logout = function () {
+    localStorage.removeItem("rpgsys_user");
+    window.location.href = "index.html";
 };
 
 </script>
@@ -436,6 +490,32 @@ window.logout = function() {
             <input id="damageInput" class="damageInput" type="number">
 
             <button id="applyDamage" class="apply">
+                Aplicar
+            </button>
+        </div>
+
+        <div class="box">
+            <h2>CA</h2>
+
+            <button id="btnCaPlus" class="round plus">+</button>
+            <button id="btnCaMinus" class="round minus">−</button>
+
+            <input id="caInput" class="damageInput" type="number">
+
+            <button id="applyCa" class="apply">
+                Aplicar
+            </button>
+        </div>
+
+        <div class="box">
+            <h2>XP</h2>
+
+            <button id="btnXpPlus" class="round plus">+</button>
+            <button id="btnXpMinus" class="round minus">−</button>
+
+            <input id="xpInput" class="damageInput" type="number">
+
+            <button id="applyXp" class="apply">
                 Aplicar
             </button>
         </div>

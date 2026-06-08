@@ -985,24 +985,30 @@ if (user.role !== "player") {
 
 const playerId = user.id;
 
-onSnapshot(doc(db,"events",playerId), (snap) => {
+// Update HP - CA - XP // 
 
-    if (!snap.exists()) {
-        console.log("Documento events não existe ainda");
-        return;
-    }
+onSnapshot(doc(db,"users",playerId), (snap) => {
+
+    if (!snap.exists()) return;
 
     const data = snap.data();
 
-    console.log("EVENT:", data);
+    // HP
+    const hpEl = document.getElementById("impfxf");
+    if (hpEl && data.hp !== undefined) {
+        hpEl.innerText = data.hp;
+    }
 
-    if (data?.action === "updateHP") {
+    // CA
+    const caEl = document.getElementById("ip4y9i");
+    if (caEl && data.ca !== undefined) {
+        caEl.innerText = data.ca;
+    }
 
-        const hpEl = document.getElementById("impfxf");
-
-        if (hpEl && data.value !== undefined) {
-            hpEl.innerText = data.value;
-        }
+    // XP
+    const xpEl = document.getElementById("ik6ens");
+    if (xpEl && data.xp !== undefined) {
+        xpEl.innerText = data.xp;
     }
 
 });
