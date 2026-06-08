@@ -129,6 +129,14 @@ button{
     border-radius:15px;
 }
 
+.damageInput {
+    flex:1;
+    height:40px;
+    border:2px solid #00c060;
+    border-radius:15px;
+    margin-bottom: 20px;
+}
+
 .coins{
     display:flex;
     gap:6px;
@@ -198,6 +206,11 @@ button{
 
     transition: 0.2s;
     border: #00c060;
+}
+
+.LogOutBTN {
+    padding: 10px;
+    width: 10%;
 }
 
 .CheckPlayerBTN:checked {
@@ -420,7 +433,7 @@ window.logout = function() {
             <button id="btnHeal" class="round plus">+</button>
             <button id="btnDamage" class="round minus">−</button>
 
-            <input id="damageInput" type="number">
+            <input id="damageInput" class="damageInput" type="number">
 
             <button id="applyDamage" class="apply">
                 Aplicar

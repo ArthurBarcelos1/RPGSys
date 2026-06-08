@@ -985,20 +985,37 @@ if (user.role !== "player") {
 
 const playerId = user.id;
 
-onSnapshot(
-    doc(db, "events", playerId),
-    (snap) => {
+onSnapshot(doc(db,"events",playerId), (snap) => {
 
-        const data = snap.data();
-
-        if (data?.action === "openInventory") {
-
-            window.location.href = "itens.html";
-
-        }
-
+    if (!snap.exists()) {
+        console.log("Documento events não existe ainda");
+        return;
     }
-);
+
+    const data = snap.data();
+
+    console.log("EVENT:", data);
+
+    if (data?.action === "updateHP") {
+
+        const hpEl = document.getElementById("impfxf");
+
+        if (hpEl && data.value !== undefined) {
+            hpEl.innerText = data.value;
+        }
+    }
+
+});
+
+onSnapshot(doc(db,"users",playerId), (snap) => {
+
+    if (!snap.exists()) return;
+
+    const data = snap.data();
+
+    document.getElementById("impfxf").innerText = data.hp;
+
+});
 
 window.logout = function() {
 
