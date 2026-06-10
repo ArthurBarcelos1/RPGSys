@@ -24,5 +24,6 @@ Add the technologies used in your project here:
 - CSS
 - Javascript
 - GitHub
-- Firebase
+- Firebase (partial)
 - Cloudinary (upcoming)
+- GrapesJS Studio
