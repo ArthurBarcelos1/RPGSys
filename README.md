@@ -22,7 +22,7 @@ Add the technologies used in your project here:
 
 - HTML
 - CSS
-- Javascript
+- JavaScript
 - GitHub
 - Firebase (partial)
 - Cloudinary (upcoming)
