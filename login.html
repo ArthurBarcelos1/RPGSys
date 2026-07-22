@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="css/login.css">
+    <title>RPGSys · Login</title>
+</head>
+<body>
+    <main class="login-shell">
+        <section class="login-card">
+            <p class="eyebrow">Acesso</p>
+            <h1>Entrar no RPGSys</h1>
+
+            <form id="loginForm" class="login-form">
+                <label>
+                    Name
+                    <input type="text" id="nameInput" name="name" required>
+                </label>
+                <label>
+                    AcessKey
+                    <input type="password" id="accessKeyInput" name="accessKey" required>
+                </label>
+                <button type="submit" class="primary-btn">Entrar</button>
+            </form>
+
+            <p id="loginStatus" class="status"></p>
+        </section>
+    </main>
+
+    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+    <script src="js/firebase.js"></script>
+    <script src="js/login.js"></script>
+</body>
+</html>

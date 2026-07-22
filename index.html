@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="css/index.css">
+    <title>RPGSys · Ficha</title>
+</head>
+<body>
+    <main class="character-shell">
+        <div class="character">
+            <div class="top-actions">
+                <button id="logoutBtn" type="button" class="secondary-btn">Logout</button>
+            </div>
+
+            <header class="sheet-header">
+                <div class="avatar-block">
+                    <img class="avatar" src="" alt="">
+                    <button id="changePhotoBtn" type="button" class="secondary-btn">Trocar foto</button>
+                </div>
+
+                <div class="sheet-identity">
+                    <h1 id="name">Sem nome</h1>
+                    <div class="sheet-meta">
+                        <span id="level">Nível 1</span>
+                        <span id="race">Raça</span>
+                        <span id="class">Classe</span>
+                    </div>
+                </div>
+            </header>
+
+            <section class="sheet-stats">
+                <div class="meter-card">
+                    <div class="meter-label">HP</div>
+                    <progress id="hpBar" max="20" value="10"></progress>
+                    <div id="hpValue">10 / 20</div>
+                </div>
+                <div class="meter-card">
+                    <div class="meter-label">CA</div>
+                    <progress id="caBar" max="10" value="10"></progress>
+                    <div id="caValue">10 / 10</div>
+                </div>
+                <div class="meter-card">
+                    <div class="meter-label">XP</div>
+                    <progress id="xpBar" max="300" value="0"></progress>
+                    <div id="xpValue">0 / 300</div>
+                </div>
+            </section>
+
+            <div class="actions-row">
+                <button id="createCharacterBtn" type="button" class="primary-btn">Criar personagem</button>
+            </div>
+
+            <div id="characterSummary"></div>
+
+            <div class="bottom-nav">
+                <button class="nav-btn active" type="button" data-target="sheet">Ficha</button>
+                <button class="nav-btn" type="button" data-target="attributes">Atributos</button>
+            </div>
+
+            <section class="panel active" data-panel="sheet">
+                <p>Ficha principal do personagem.</p>
+            </section>
+            <section class="panel" data-panel="attributes">
+                <p>Detalhes e atributos calculados.</p>
+            </section>
+        </div>
+    </main>
+
+    <div id="characterModal" class="modal hidden" aria-hidden="true">
+        <div class="modal-card">
+            <button id="closeModalBtn" type="button" class="close-btn">×</button>
+            <h2>Novo personagem</h2>
+            <form id="characterForm">
+                <label>
+                    Nome
+                    <input type="text" name="name" required>
+                </label>
+                <label>
+                    Classe
+                    <input type="text" name="className" required>
+                </label>
+                <label>
+                    Raça
+                    <input type="text" name="race" required>
+                </label>
+                <label>
+                    Antecedente
+                    <input type="text" name="background" required>
+                </label>
+                <label>
+                    Foto
+                    <input id="avatarFile" type="file" accept="image/*">
+                </label>
+                <p id="uploadStatus" class="status">Nenhuma imagem enviada ainda.</p>
+                <button type="submit" class="primary-btn">Salvar</button>
+            </form>
+        </div>
+    </div>
+
+    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+    <script src="js/firebase.js"></script>
+    <script src="js/index.js"></script>
+</body>
+</html>
+    <!-- Container principal da ficha do personagem -->
+    <div class="character">
+        <div class="top-actions">
+            <button id="logoutBtn" type="button" class="secondary-btn">Logout</button>
+        </div>
+
+        <!-- Cabeçalho com avatar e dados básicos -->
+        <header>
+            <img class="avatar">
+
+            <div class="info">
+                <h1 id="name"></h1>
+                <span id="level"></span>
+                <span id="race"></span>
+                <span id="class"></span>
+            </div>
+        </header>
+
+        <!-- Área principal onde ficam os painéis da ficha e dos atributos -->
+        <main class="content">
+            <!-- Painel da ficha com barras de status e seções extras -->
+            <section class="panel ficha-panel active" data-panel="ficha">
+                <section class="status">
+                    <div class="bar hp">
+                        <label>Vida</label>
+                        <progress id="hpBar" value="0" max="10"></progress>
+                        <span id="hpValue">0 / 0</span>
+                    </div>
+
+                    <div class="bar ca">
+                        <label>CA</label>
+                        <progress id="caBar" value="0" max="10"></progress>
+                        <span id="caValue">0 / 0</span>
+                    </div>
+
+                    <div class="bar xp">
+                        <label>XP</label>
+                        <progress id="xpBar" value="0" max="300"></progress>
+                        <span id="xpValue">0 / 300</span>
+                    </div>
+                </section>
+
+                <section id="attributes"></section>
+                <section id="currencies"></section>
+                <section id="inventory"></section>
+                <section id="equipment"></section>
+                <section id="skills"></section>
+                <section id="spells"></section>
+                <section id="quests"></section>
+                <section id="effects"></section>
+                <section id="notes"></section>
+            </section>
+
+            <section class="panel personagem-panel" data-panel="personagem">
+                <div class="panel-header">
+                    <h2>Personagem</h2>
+                    <div class="panel-actions">
+                        <button id="changePhotoBtn" type="button" class="secondary-btn hidden">Trocar foto</button>
+                        <button id="createCharacterBtn" type="button" class="secondary-btn">Criar personagem</button>
+                    </div>
+                </div>
+
+                <div id="characterSummary" class="character-summary">
+                    <p class="empty-state">Nenhum personagem criado ainda.</p>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- Barra de navegação fixa na parte inferior, com acesso à ficha e à visão do mestre -->
+    <nav class="bottom-nav" aria-label="Navegação da ficha">
+        <button class="nav-btn active" data-target="ficha">Ficha</button>
+        <button class="nav-btn" data-target="personagem">Personagem</button>
+    </nav>
+
+    <!-- Modal de criação e edição do personagem -->
+    <div id="characterModal" class="modal hidden" aria-hidden="true">
+        <div class="modal-content">
+            <button id="closeModalBtn" class="close-modal" type="button" aria-label="Fechar">×</button>
+            <h3>Criar personagem</h3>
+            <form id="characterForm" class="character-form">
+                <label>
+                    Nome
+                    <input type="text" name="name" required>
+                </label>
+
+                <label>
+                    Classe
+                    <select name="className" required>
+                        <option value="">Selecione uma classe</option>
+                        <option value="Artífice">Artífice</option>
+                        <option value="Bárbaro">Bárbaro</option>
+                        <option value="Bardo">Bardo</option>
+                        <option value="Bruxo">Bruxo</option>
+                        <option value="Clérigo">Clérigo</option>
+                        <option value="Druida">Druida</option>
+                        <option value="Feiticeiro">Feiticeiro</option>
+                        <option value="Guerreiro">Guerreiro</option>
+                        <option value="Ladino">Ladino</option>
+                        <option value="Mago">Mago</option>
+                        <option value="Monge">Monge</option>
+                        <option value="Paladino">Paladino</option>
+                        <option value="Patrulheiro">Patrulheiro</option>
+                    </select>
+                </label>
+
+                <label>
+                    Raça
+                    <select name="race" required>
+                        <option value="">Selecione uma raça</option>
+                        <option value="Humano">Humano</option>
+                        <option value="Elfo">Elfo</option>
+                        <option value="Anão">Anão</option>
+                        <option value="Halfling">Halfling</option>
+                        <option value="Draconato">Draconato</option>
+                        <option value="Gnomo">Gnomo</option>
+                        <option value="Meio-Elfo">Meio-Elfo</option>
+                        <option value="Meio-Orc">Meio-Orc</option>
+                        <option value="Tiefling">Tiefling</option>
+                        <option value="Aasimar">Aasimar</option>
+                        <option value="Firbolg">Firbolg</option>
+                        <option value="Golias">Golias</option>
+                        <option value="Kenku">Kenku</option>
+                        <option value="Lagarto">Lagarto</option>
+                        <option value="Tabaxi">Tabaxi</option>
+                        <option value="Tritão">Tritão</option>
+                        <option value="Bugbear">Bugbear</option>
+                        <option value="Goblin">Goblin</option>
+                        <option value="Hobgoblin">Hobgoblin</option>
+                        <option value="Kobold">Kobold</option>
+                        <option value="Orc">Orc</option>
+                        <option value="Yuan-ti">Yuan-ti</option>
+                        <option value="Gensen">Gensen</option>
+                        <option value="Aarakocra">Aarakocra</option>
+                        <option value="Changeling">Changeling</option>
+                        <option value="Kalashtar">Kalashtar</option>
+                        <option value="Shifter">Shifter</option>
+                        <option value="Warforged">Warforged</option>
+                        <option value="Gith">Gith</option>
+                        <option value="Centauro">Centauro</option>
+                        <option value="Minotauro">Minotauro</option>
+                        <option value="Satirista">Satirista</option>
+                        <option value="Leonino">Leonino</option>
+                        <option value="Fada">Fada</option>
+                        <option value="Harengon">Harengon</option>
+                        <option value="Owlin">Owlin</option>
+                        <option value="Thri-kreen">Thri-kreen</option>
+                        <option value="Giff">Giff</option>
+                        <option value="Hadozee">Hadozee</option>
+                        <option value="Plasmoide">Plasmoide</option>
+                        <option value="Autognomo">Autognomo</option>
+                        <option value="Kunder">Kunder</option>
+                        <option value="Glithzerai">Glithzerai</option>
+                    </select>
+                </label>
+
+                <label>
+                    Antecedente
+                    <select name="background" required>
+                        <option value="">Selecione um antecedente</option>
+                        <option value="Acólito">Acólito</option>
+                        <option value="Artesão Guildante">Artesão Guildante</option>
+                        <option value="Charlatão">Charlatão</option>
+                        <option value="Criminoso">Criminoso</option>
+                        <option value="Entretenedor">Entretenedor</option>
+                        <option value="Eremita">Eremita</option>
+                        <option value="Forasteiro">Forasteiro</option>
+                        <option value="Herói do Povo">Herói do Povo</option>
+                        <option value="Marinheiro">Marinheiro</option>
+                        <option value="Nobre">Nobre</option>
+                        <option value="Órfão">Órfão</option>
+                        <option value="Sábio">Sábio</option>
+                        <option value="Soldado">Soldado</option>
+                    </select>
+                </label>
+
+                <label>
+                    Foto do personagem
+                    <input id="avatarFile" type="file" accept="image/*">
+                </label>
+
+                <div id="uploadStatus" class="upload-status">Nenhuma imagem enviada ainda.</div>
+
+                <button type="submit" class="primary-btn">Salvar personagem</button>
+            </form>
+        </div>
+    </div>
+
+    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+    <script src="js/firebase.js"></script>
+    <script src="js/auth-guard.js"></script>
+    <script src="js/index.js"></script>
+</body>
+</html>
