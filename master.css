@@ -1,0 +1,152 @@
+:root {
+    /* Paleta visual da tela do mestre */
+    --bg: #060816;
+    --panel: #111827;
+    --panel-2: #182235;
+    --text: #f2f5ff;
+    --muted: #b7c4d6;
+    --accent: #00e5ff;
+    --accent-2: #3b82f6;
+    --success: #00ffb2;
+    --danger: #ff3c6a;
+}
+
+* { box-sizing: border-box; }
+
+/* Layout base da página do mestre */
+body {
+    margin: 0;
+    font-family: Inter, sans-serif;
+    background: radial-gradient(circle at top, #16335c 0%, transparent 35%), #060816;
+    color: var(--text);
+    min-height: 100vh;
+}
+
+.master-shell {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 24px 20px 40px;
+}
+
+.master-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 20px;
+}
+
+.eyebrow {
+    margin: 0 0 6px;
+    color: var(--accent);
+    text-transform: uppercase;
+    letter-spacing: 0.2em;
+    font-size: 0.8rem;
+}
+
+h1 {
+    margin: 0;
+}
+
+.master-actions {
+    display:flex;
+    gap:10px;
+    align-items:center;
+}
+
+.secondary-link {
+    color: var(--text);
+    text-decoration: none;
+    padding: 10px 14px;
+    border-radius: 999px;
+    background: rgba(255,255,255,.08);
+}
+
+.master-panel {
+    background: rgba(17,24,39,.85);
+    border: 1px solid rgba(255,255,255,.08);
+    border-radius: 18px;
+    padding: 20px;
+}
+
+.master-list {
+    display: grid;
+    gap: 14px;
+}
+
+.master-card {
+    background: var(--panel-2);
+    border: 1px solid rgba(255,255,255,.08);
+    border-radius: 16px;
+    padding: 16px;
+    display: grid;
+    gap: 12px;
+}
+
+.master-card-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+}
+
+.master-card-top strong {
+    font-size: 1.1rem;
+}
+
+.master-card-top span {
+    color: var(--muted);
+}
+
+.controls {
+    display: grid;
+    gap: 10px;
+}
+
+.control-row {
+    display: grid;
+    gap: 6px;
+}
+
+.control-row label {
+    color: var(--muted);
+    font-size: 0.92rem;
+}
+
+input {
+    width: 100%;
+    padding: 10px 12px;
+    border-radius: 10px;
+    border: 1px solid rgba(255,255,255,.12);
+    background: #101827;
+    color: white;
+}
+
+button {
+    border: none;
+    border-radius: 999px;
+    padding: 10px 14px;
+    cursor: pointer;
+    font-weight: 700;
+    color: white;
+    background: linear-gradient(135deg, var(--accent), var(--accent-2));
+}
+
+button.secondary {
+    background: rgba(255,255,255,.1);
+}
+
+.status-pill {
+    padding: 6px 10px;
+    border-radius: 999px;
+    font-size: 0.82rem;
+    background: rgba(0,255,178,.15);
+    color: var(--success);
+}
+
+@media (max-width: 700px) {
+    .master-header {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+}
